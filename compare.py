@@ -3,7 +3,7 @@
 from utils import *
 
 
-tickers = get_tickers()[:5]
+tickers = get_tickers()
 closes = {}
 for ticker in tickers:
     closes[ticker] = get_closes(ticker)
