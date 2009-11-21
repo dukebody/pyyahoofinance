@@ -44,8 +44,7 @@ def get_closes(ticker):
 
 def get_diffs(closes):
     """Return the velocity of the provided closes."""
-    period = len(closes)
-    diffs = [(closes[i] - closes[i-1])/closes[i]*100 for i in range(1, period)]
+    diffs = [(closes[i] - closes[i-1])/closes[i]*100 for i in range(1, len(closes))]
     return diffs
 
 def get_deviations(closes, reference_closes):
@@ -53,16 +52,14 @@ def get_deviations(closes, reference_closes):
     assert len(closes) == len(reference_closes)
     diffs = get_diffs(closes)
     reference_diffs = get_diffs(reference_closes)
-    period = len(diffs)
-    deviation = [diffs[i] - reference_diffs[i] for i in range(0, period)]
+    deviation = [diffs[i] - reference_diffs[i] for i in range(0, len(diffs))]
     return deviation
 
 def get_acceleration(closes, reference_closes):
     """Return the acceleration of the given closes."""
     assert len(closes) == len(reference_closes)
-    period = len(closes)
     deviation = get_deviations(closes, reference_closes)
-    acceleration = [deviation[i] - deviation[i-1] for i in range(1, period-1)]
+    acceleration = [deviation[i] - deviation[i-1] for i in range(1, len(deviation))]
     return acceleration
 
 def get_mean_point_accelerations(closes_list, reference_closes):
