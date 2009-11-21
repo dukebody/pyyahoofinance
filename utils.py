@@ -4,10 +4,12 @@ import urllib2
 def floatify(list_):
     """Cast all members of the given list to float."""
     floatified = [float(e) for e in list_]
+    return floatified
 
 def stringify(list_):
     """Cast all members of the given list to string."""
     stringified = [string(e) for e in list_]
+    return stringified
 
 
 CLOSE_COLUMN = 4 # the index of the column containing the close value
