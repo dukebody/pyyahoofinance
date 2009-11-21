@@ -19,7 +19,7 @@ INDEX = '%5EGSPC' # ticker of the index
 def get_tickers():
     """Get the Standard & Poor stock tickers."""
     tickers = []
-    for n in range(0, 50, 50):
+    for n in range(0, 500, 50):
         url = urllib2.urlopen("http://download.finance.yahoo.com/d/quotes.csv?s=@%5EGSPC&f=sl1d1t1c1ohgv&e=.csv&h=PAGE".replace('PAGE', str(n)))
         data = url.read()
         stocks = data.split('\r\n')
@@ -31,7 +31,7 @@ def get_tickers():
                     tickers.append(ticker)
             except IndexError: # empty row
                 pass
-
+    import pdb; pdb.set_trace()
     return tickers
 
 
