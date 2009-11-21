@@ -9,10 +9,7 @@ for ticker in tickers:
     closes[ticker] = get_closes(ticker)
 index_closes = get_closes(INDEX)
 
-acceleration = {}
-for ticker in tickers:
-    acceleration[ticker] = get_acceleration(closes[ticker], index_closes)
+closes_list = [closes[ticker] for ticker in tickers]
+mean_point_acceleration = get_mean_point_accelerations(closes_list, index_closes)
 
-
-print acceleration
-
+print mean_point_acceleration

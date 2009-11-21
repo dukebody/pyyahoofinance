@@ -64,3 +64,13 @@ def get_acceleration(closes, reference_closes):
     deviation = get_deviations(closes, reference_closes)
     acceleration = [deviation[i] - deviation[i-1] for i in range(1, period-1)]
     return acceleration
+
+def get_mean_point_accelerations(closes_list, reference_closes):
+    """Return the mean acceleration at each point as a mean among the
+    given list of closes.
+    """
+    assert len(closes_list[0]) == len(reference_closes)
+    accelerations = [get_acceleration(closes, reference_closes) for closes in closes_list]
+    point_accelerations = zip(*accelerations)
+    mean_point_accelerations = [sum(pa)/len(pa) for pa in point_accelerations]
+    return mean_point_accelerations
