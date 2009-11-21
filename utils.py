@@ -89,8 +89,7 @@ def get_mean_point_accelerations(closes_list, reference_closes, absolute=True):
         chosen_get_acceleration = get_abs_acceleration
     else:
         chosen_get_acceleration = get_acceleration
-    valid_closes = [closes for closes in closes_list if len(closes) == len(reference_closes)]
-    accelerations = [chosen_get_acceleration(closes, reference_closes) for closes in valid_closes]
+    accelerations = [chosen_get_acceleration(closes, reference_closes) for closes in closes_list]
     point_accelerations = zip(*accelerations)
     mean_point_accelerations = [sum(pa)/len(pa) for pa in point_accelerations]
     return mean_point_accelerations
