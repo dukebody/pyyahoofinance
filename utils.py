@@ -1,5 +1,15 @@
 import urllib2
 
+
+def floatify(list_):
+    """Cast all members of the given list to float."""
+    floatified = [float(e) for e in list_]
+
+def stringify(list_):
+    """Cast all members of the given list to string."""
+    stringified = [string(e) for e in list_]
+
+
 CLOSE_COLUMN = 4 # the index of the column containing the close value
 TICKER_COLUMN = 0 # the index of the column containing the ticker name
 INDEX = '%5EGSPC' # ticker of the index
