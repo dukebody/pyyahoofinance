@@ -74,12 +74,24 @@ def get_acceleration(closes, reference_closes):
     acceleration = [deviation[i] - deviation[i-1] for i in range(1, len(deviation))]
     return acceleration
 
-def get_mean_point_accelerations(closes_list, reference_closes):
+def get_abs_acceleration(closes, reference_closes):
+    """Return the absolute acceleration of the given
+    closes, i.e. deceleration is accounted as acceleration too."""
+    acceleration = get_acceleration(closes, reference_closes)
+    abs_acceleration = [abs(val) for val in acceleration]
+    return abs_acceleration
+
+def get_mean_point_accelerations(closes_list, reference_closes, absolute=True):
     """Return the mean acceleration at each point as a mean among the
     given list of closes.
     """
     assert len(closes_list[0]) == len(reference_closes)
-    accelerations = [get_acceleration(closes, reference_closes) for closes in closes_list]
+    if absolute:
+        chosen_get_acceleration = get_abs_acceleration
+    else:
+        chosen_get_acceleration = get_acceleration
+    valid_closes = [closes for closes in closes_list if len(closes) == len(reference_closes)]
+    accelerations = [chosen_get_acceleration(closes, reference_closes) for closes in valid_closes]
     point_accelerations = zip(*accelerations)
     mean_point_accelerations = [sum(pa)/len(pa) for pa in point_accelerations]
     return mean_point_accelerations
