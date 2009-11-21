@@ -31,7 +31,6 @@ def get_tickers():
                     tickers.append(ticker)
             except IndexError: # empty row
                 pass
-    import pdb; pdb.set_trace()
     return tickers
 
 
