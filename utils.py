@@ -8,7 +8,7 @@ def floatify(list_):
 
 def stringify(list_):
     """Cast all members of the given list to string."""
-    stringified = [string(e) for e in list_]
+    stringified = [str(e) for e in list_]
     return stringified
 
 
