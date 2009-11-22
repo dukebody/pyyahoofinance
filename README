@@ -1,1 +1,13 @@
+pyyahoofinance 
+============== 
+
+These python modules and scripts were designed to fetch and manipulate
+economical data to study certain correlations in the stock values for
+a project/presentation for the course Chaos and Self-Organization at
+KTH.
+
+
+License
+=======
+
 This code is part of the public domain. Do whatever you want with it.
