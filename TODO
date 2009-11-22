@@ -1,0 +1,6 @@
+- Think of a better method to avoid non-existing and incomplete
+  historical values.
+
+- Create a method to download the spreadsheets once and reuse them for
+  calculations instead of downloading them everytime the script is
+  executed.
