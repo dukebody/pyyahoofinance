@@ -65,8 +65,7 @@ def get_closes_from_tickerslist(tickerslist):
     closes = {}
     for ticker in tickerslist:
         try:
-            c = get_closes(ticker)
-            closes[ticker] = stringify(c)
+            closes[ticker] = get_closes(ticker)
         except (urllib2.HTTPError, ValueError): # data for the ticker not found or incomplete
             print "data not found or incomplete for ticker: %s" % ticker
 
