@@ -3,7 +3,7 @@
 from utils import *
 import urllib2
 
-sap_tickers = get_tickers()[80:90] # Standard & Poor's tickers
+sap_tickers = get_tickers() # Standard & Poor's tickers
 sap_tickers += [INDEX] # add the index itself too
 
 closes = get_closes_from_tickerslist(sap_tickers)
