@@ -12,6 +12,7 @@ def stringify(list_):
     return stringified
 
 
+NWEEKS = 12*9 # number of weeks we get data from
 CLOSE_COLUMN = 4 # the index of the column containing the close value
 TICKER_COLUMN = 0 # the index of the column containing the ticker name
 INDEX = '%5EGSPC' # ticker of the index
@@ -35,18 +36,21 @@ def get_tickers():
 
 
 def get_closes(ticker):
-    """Return the closing values for the stocks with the ticker
-    provided as a list, in the form {'ticker':[value1, value2, ...]}.
+    """Return the historical closing values for the stocks with the
+    ticker provided as a list, in the form [value1, value2, ...].
     """
 
     print "getting data from ticker: %s" % ticker
     url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=2000&d=00&e=1&f=2009&g=m&ignore=.csv" % ticker)
 
     history = url.read()
-
+    
     measures = history.split('\n')
     measures = measures[1:-1] # the last row is empty and the first
                               # one contains the labels
+
+    if len(measures) != NWEEKS: # incomplete data
+        raise ValueError
 
     closes = [float(measure.split(',')[CLOSE_COLUMN]) for measure in measures]
 

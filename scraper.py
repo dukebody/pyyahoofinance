@@ -1,15 +1,20 @@
 #!/usr/bin/python
 
 from utils import *
+import urllib2
 
-tickers = get_tickers()[:5]
-tickers += [INDEX]
+sap_tickers = get_tickers()[:90] # Standard & Poor's tickers
+sap_tickers += [INDEX] # add the index itself too
 closes = {}
-for ticker in tickers:
-    closes[ticker] = [str(close) for close in get_closes(ticker)]
+for ticker in sap_tickers:
+    try:
+        c = get_closes(ticker)
+        closes[ticker] = stringify(c)
+    except (urllib2.HTTPError, ValueError): # data for the ticker not found or incomplete
+        print "data not found or incomplete for ticker: %s" % ticker
 
-
-columns = [[ticker] + closes[ticker] for ticker in closes.keys()]
+valid_tickers = closes.keys()
+columns = [[ticker] + closes[ticker] for ticker in valid_tickers]
 
 rows = zip(*columns)
 out = open('results.txt', 'w')
