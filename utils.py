@@ -56,6 +56,23 @@ def get_closes(ticker):
 
     return closes
 
+def get_closes_from_tickerslist(tickerslist): 
+    """Return the historical closing values for the stocks with the
+    tickers provided, as a dictionary with tickers as keys. If the
+    data for a ticker is not found or incomplete, it won't appear in
+    the returned dict.
+    """
+    closes = {}
+    for ticker in tickerslist:
+        try:
+            c = get_closes(ticker)
+            closes[ticker] = stringify(c)
+        except (urllib2.HTTPError, ValueError): # data for the ticker not found or incomplete
+            print "data not found or incomplete for ticker: %s" % ticker
+
+    return closes
+
+
 
 def get_diffs(closes):
     """Return the velocity of the provided closes."""

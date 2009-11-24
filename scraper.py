@@ -5,13 +5,8 @@ import urllib2
 
 sap_tickers = get_tickers()[:90] # Standard & Poor's tickers
 sap_tickers += [INDEX] # add the index itself too
-closes = {}
-for ticker in sap_tickers:
-    try:
-        c = get_closes(ticker)
-        closes[ticker] = stringify(c)
-    except (urllib2.HTTPError, ValueError): # data for the ticker not found or incomplete
-        print "data not found or incomplete for ticker: %s" % ticker
+
+closes = get_closes_from_tickerslist(sap_tickers)
 
 valid_tickers = closes.keys()
 columns = [[ticker] + closes[ticker] for ticker in valid_tickers]
