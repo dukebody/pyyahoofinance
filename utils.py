@@ -76,8 +76,10 @@ def get_closes_from_tickerslist(tickerslist):
     for ticker in tickerslist:
         try:
             closes[ticker] = get_closes(ticker)
-        except (IOError, ValueError): # data for the ticker not found or incomplete
-            print "data not found or incomplete for ticker: %s" % ticker
+        except IOError: # data for the ticker not found or incomplete
+            print "data not found for ticker: %s" % ticker
+        except ValueError: # data for the ticker is incomplete
+            print "data incomplete for ticker: %s" % ticker
 
     return closes
 
