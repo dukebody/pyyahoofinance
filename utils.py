@@ -11,6 +11,17 @@ def stringify(list_):
     stringified = [str(e) for e in list_]
     return stringified
 
+def mean(list_):
+    """Calculate the mean of the values of the given list."""
+    return sum(list_)/len(list_)
+
+def point_mean(list_of_lists):
+    """Given a list of lists with the same length, return a list where each value is a mean of the given ones, i.e::
+    >>> list_ = [[1, 2], [3, 4]]
+    >>> point_mean(list_) = [mean([1, 2], mean([3, 4])]
+    """
+    points = zip(*list_of_lists)
+    return [mean(p) for p in points]
 
 DATA_FOLDER = 'data'
 NWEEKS = 12*9 # number of weeks we get data from
@@ -98,6 +109,11 @@ def get_deviations(closes, reference_closes):
     deviation = [diffs[i] - reference_diffs[i] for i in range(0, len(diffs))]
     return deviation
 
+def get_abs_deviations(closes, reference_closes):
+    deviations = get_deviations(closes, reference_closes)
+    abs_deviation = [abs(val) for val in deviations]
+    return abs_deviation
+
 def get_acceleration(closes, reference_closes):
     """Return the acceleration of the given closes."""
     assert len(closes) == len(reference_closes)
@@ -108,9 +124,10 @@ def get_acceleration(closes, reference_closes):
 def get_abs_acceleration(closes, reference_closes):
     """Return the absolute acceleration of the given
     closes, i.e. deceleration is accounted as acceleration too."""
-    acceleration = get_acceleration(closes, reference_closes)
-    abs_acceleration = [abs(val) for val in acceleration]
-    return abs_acceleration
+    assert len(closes) == len(reference_closes)
+    deviation = get_abs_deviations(closes, reference_closes)
+    acceleration = [deviation[i] - deviation[i-1] for i in range(1, len(deviation))]
+    return acceleration
 
 def get_mean_point_accelerations(closes_list, reference_closes, absolute=True):
     """Return the mean acceleration at each point as a mean among the
@@ -122,6 +139,4 @@ def get_mean_point_accelerations(closes_list, reference_closes, absolute=True):
     else:
         chosen_get_acceleration = get_acceleration
     accelerations = [chosen_get_acceleration(closes, reference_closes) for closes in closes_list]
-    point_accelerations = zip(*accelerations)
-    mean_point_accelerations = [sum(pa)/len(pa) for pa in point_accelerations]
-    return mean_point_accelerations
+    return point_mean(accelerations)
