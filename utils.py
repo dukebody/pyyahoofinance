@@ -12,6 +12,7 @@ def stringify(list_):
     return stringified
 
 
+DATA_FOLDER = 'data'
 NWEEKS = 12*9 # number of weeks we get data from
 CLOSE_COLUMN = 4 # the index of the column containing the close value
 TICKER_COLUMN = 0 # the index of the column containing the ticker name
@@ -35,15 +36,24 @@ def get_tickers():
     return tickers
 
 
+def download_historical_data(ticker):
+    """Download historical data for the given ticker in CSV."""
+    print "getting data from ticker: %s" % ticker
+    url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=2000&d=00&e=1&f=2009&g=m&ignore=.csv" % ticker)
+
+    history = url.read()
+    f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'w')
+    f.write(history)
+    f.close()
+
+
 def get_closes(ticker):
     """Return the historical closing values for the stocks with the
     ticker provided as a list, in the form [value1, value2, ...].
     """
 
-    print "getting data from ticker: %s" % ticker
-    url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=2000&d=00&e=1&f=2009&g=m&ignore=.csv" % ticker)
-
-    history = url.read()
+    f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'r')
+    history = f.read()
     
     measures = history.split('\n')
     measures = measures[1:-1] # the last row is empty and the first
@@ -66,7 +76,7 @@ def get_closes_from_tickerslist(tickerslist):
     for ticker in tickerslist:
         try:
             closes[ticker] = get_closes(ticker)
-        except (urllib2.HTTPError, ValueError): # data for the ticker not found or incomplete
+        except (IOError, ValueError): # data for the ticker not found or incomplete
             print "data not found or incomplete for ticker: %s" % ticker
 
     return closes
