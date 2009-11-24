@@ -1,3 +1,0 @@
-- Create a method to download the spreadsheets once and reuse them for
-  calculations instead of downloading them everytime the script is
-  executed.
