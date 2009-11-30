@@ -25,6 +25,7 @@ def point_mean(list_of_lists):
 
 DATA_FOLDER = 'data'
 NWEEKS = 12*9 # number of weeks we get data from
+NVALUES = 1259 # number of expected values XXX: this is terribly ugly
 CLOSE_COLUMN = 4 # the index of the column containing the close value
 TICKER_COLUMN = 0 # the index of the column containing the ticker name
 INDEX = '%5EGSPC' # ticker of the index
@@ -46,6 +47,15 @@ def get_tickers():
                 pass
     return tickers
 
+def download_historical_daily_data(ticker):
+    """Download historical data for the given ticker in CSV."""
+    print "getting data from ticker: %s" % ticker
+    url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=2004&d=00&e=1&f=2009&g=d&ignore=.csv" % ticker)
+
+    history = url.read()
+    f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'w')
+    f.write(history)
+    f.close()
 
 def download_historical_data(ticker):
     """Download historical data for the given ticker in CSV."""
@@ -70,7 +80,7 @@ def get_closes(ticker):
     measures = measures[1:-1] # the last row is empty and the first
                               # one contains the labels
 
-    if len(measures) != NWEEKS: # incomplete data
+    if len(measures) != NVALUES: # incomplete data
         raise ValueError
 
     closes = [float(measure.split(',')[CLOSE_COLUMN]) for measure in measures]
