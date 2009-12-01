@@ -1,4 +1,5 @@
 import urllib2
+from stockmarket import Stock
 
 
 def floatify(list_):
@@ -47,10 +48,10 @@ def get_tickers():
                 pass
     return tickers
 
-def download_historical_daily_data(ticker):
+def download_historical_daily_data(ticker, year_start, year_end):
     """Download historical data for the given ticker in CSV."""
     print "getting data from ticker: %s" % ticker
-    url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=2004&d=00&e=1&f=2009&g=d&ignore=.csv" % ticker)
+    url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=%d&d=00&e=1&f=%d&g=d&ignore=.csv" % (ticker, year_start, year_end))
 
     history = url.read()
     f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'w')
@@ -68,7 +69,9 @@ def download_historical_data(ticker):
     f.close()
 
 def get_dates(ticker):
-    """Return the list of dates with values for a certain ticker."""
+    """Return the list of dates with values for a certain ticker, in
+    ascendent order. This is designed to be used in the X axis label
+    of graphs."""
 
     f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'r')
     history = f.read()
@@ -77,10 +80,7 @@ def get_dates(ticker):
     measures = measures[1:-1] # the last row is empty and the first
                               # one contains the labels
 
-    if len(measures) != NVALUES: # incomplete data
-        raise ValueError
-
-    date_column = 0
+    date_column = 0  # dates are stored in the first column
     dates = [measure.split(',')[date_column] for measure in measures]
 
     dates.reverse()
@@ -88,8 +88,8 @@ def get_dates(ticker):
     
 
 def get_closes(ticker):
-    """Return the historical closing values for the stocks with the
-    ticker provided as a list, in the form [value1, value2, ...].
+    """Return a list of the the historical closing values for the
+    stocks with the ticker provided, sorted by ascendent date.
     """
 
     f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'r')
@@ -98,34 +98,31 @@ def get_closes(ticker):
     measures = history.split('\n')
     measures = measures[1:-1] # the last row is empty and the first
                               # one contains the labels
-
-    if len(measures) != NVALUES: # incomplete data
-        raise ValueError
-
+    
     closes = [float(measure.split(',')[CLOSE_COLUMN]) for measure in measures]
 
     closes.reverse()
     return closes
 
-def get_closes_from_tickerslist(tickerslist): 
-    """Return the historical closing values for the stocks with the
-    tickers provided, as a dictionary with tickers as keys. If the
-    data for a ticker is not found or incomplete, it won't appear in
-    the returned dict.
+def get_stocks_from_tickerslist(tickerslist): 
+    """Returns a list of Stocks with the tickers from the
+    tickerslist. If the data for a ticker is not found or incomplete,
+    its associated stock won't appear in the returned list.
     """
-    closes = {}
+    
+    stocks = []
     for ticker in tickerslist:
         try:
-            closes[ticker] = get_closes(ticker)
+            values = get_closes(ticker)
+            stocks.append(Stock(ticker, values))
         except IOError: # data for the ticker not found or incomplete
             print "data not found for ticker: %s" % ticker
-        except ValueError: # data for the ticker is incomplete
-            print "data incomplete for ticker: %s" % ticker
 
-    return closes
+    max_len = max([len(s.values) for s in stocks])
+    valid_stocks = [s for s in stocks if len(s.values) == max_len]
+    return valid_stocks
 
-
-
+### START OBSOLETE CODE ###
 def get_diffs(closes):
     """Return the velocity of the provided closes."""
     diffs = [(closes[i] - closes[i-1])/closes[i]*100 for i in range(1, len(closes))]
@@ -170,3 +167,4 @@ def get_mean_point_accelerations(closes_list, reference_closes, absolute=True):
         chosen_get_acceleration = get_acceleration
     accelerations = [chosen_get_acceleration(closes, reference_closes) for closes in closes_list]
     return point_mean(accelerations)
+### END OBSOLETE CODE ###

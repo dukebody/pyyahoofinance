@@ -4,10 +4,8 @@ import utils
 from stockmarket import Stock, Market
 
 sap_tickers = utils.get_tickers() # Standard & Poor's tickers
-closes = utils.get_closes_from_tickerslist(sap_tickers)
-valid_tickers = closes.keys()
-dates = utils.get_dates(valid_tickers[0])
-stocks = [Stock(ticker, closes[ticker]) for ticker in valid_tickers]
+stocks = utils.get_stocks_from_tickerslist(sap_tickers)
+dates = utils.get_dates(stocks[0].ticker) 
 market = Market(stocks)
 
 spread = []
