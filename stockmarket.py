@@ -56,3 +56,6 @@ class Market:
         defensive_returns = [r for r in market_returns if r<=0]
         defensive_benchmark = utils.mean(defensive_returns)
         return defensive_benchmark
+
+    def getPerformance(self, start_day, end_day):
+        return utils.mean(self.returns[start_day:end_day])

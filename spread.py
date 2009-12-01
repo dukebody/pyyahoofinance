@@ -10,6 +10,7 @@ stocks = [Stock(ticker, closes[ticker]) for ticker in valid_tickers]
 market = Market(stocks)
 
 spread = []
+market_performance = []
 STEP = 30
 
 for i in range(STEP, len(stocks[0].values)-STEP, STEP):
@@ -23,9 +24,13 @@ for i in range(STEP, len(stocks[0].values)-STEP, STEP):
     mean_strong_performance = utils.mean([s.getPerformance(start+STEP, end+STEP) for s in strong_stocks])
     mean_weak_performance = utils.mean([s.getPerformance(start+STEP, end+STEP) for s in weak_stocks])
     spread.append(mean_strong_performance - mean_weak_performance)
+    market_performance.append(market.getPerformance(start, end))
 
 
-rows = utils.stringify(spread)
+columns = (utils.stringify(spread), utils.stringify(market_performance))
+rows = zip(*columns)
 out = open('spread.txt', 'w')
-out.write('\n'.join(rows))
+for row in rows:
+    out.write(' '.join(row))
+    out.write('\n')
 out.close()
