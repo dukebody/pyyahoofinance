@@ -9,7 +9,7 @@ class Stock:
         self.market = None
 
     def _getReturns(self):
-        return [0] + [(self.values[i-1] - self.values[i])/self.values[i-1]*100 for i in range(1, len(self.values))]
+        return [0] + [(self.values[i] - self.values[i-1])/self.values[i-1]*100 for i in range(1, len(self.values))]
 
     def getPerformance(self, start_day, end_day):
         return utils.mean(self.returns[start_day:end_day])
@@ -43,7 +43,7 @@ class Market:
         return utils.point_mean(stocks_values)
 
     def _getReturns(self):
-        return [0] + [(self.values[i-1] - self.values[i])/self.values[i-1]*100 for i in range(1, len(self.values))]  
+        return [0] + [(self.values[i] - self.values[i-1])/self.values[i-1]*100 for i in range(1, len(self.values))]  
 
     def getOffensiveBenchmark(self, start_day, end_day):
         market_returns = self.returns[start_day:end_day]
