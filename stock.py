@@ -13,6 +13,9 @@ class Stock:
     def _getReturns(self):
         return [0] + [(self.values[i-1] - self.values[i])/self.values[i-1]*100 for i in range(1, len(self.values))]
 
+    def getPerformance(self, start_day, end_day):
+        return utils.mean(self.returns[start_day:end_day])
+
     def getOffensive(self, start_day, end_day):
         stock_returns = self.returns[start_day:end_day]
         market_returns = self.market.returns[start_day:end_day]
@@ -52,7 +55,7 @@ class Market:
 
     def getDefensiveBenchmark(self, start_day, end_day):
         market_returns = self.returns[start_day:end_day]
-        defensive_returns = [r for r in market_returns if r>=0]
+        defensive_returns = [r for r in market_returns if r<=0]
         defensive_benchmark = utils.mean(defensive_returns)
         return defensive_benchmark
 
@@ -63,14 +66,23 @@ valid_tickers = closes.keys()
 stocks = [Stock(ticker, closes[ticker]) for ticker in valid_tickers]
 market = Market(stocks)
 
+spread = []
+STEP = 30
 
-columns = [[s.ticker] + [str(s.getOffensive(1,22))] for s in market.stocks]
+for i in range(STEP, len(stocks[0].values)-STEP, STEP):
+    start = i
+    end = i+STEP
+    strong_stocks = [s for s in stocks 
+                     if s.getOffensive(start, end) >= 100 and s.getDefensive(start, end) <= 100]
+    weak_stocks = [s for s in stocks 
+                   if s.getOffensive(start, end) <= 100 and s.getDefensive(start, end) >= 100]
+ 
+    mean_strong_performance = utils.mean([s.getPerformance(start+STEP, end+STEP) for s in strong_stocks])
+    mean_weak_performance = utils.mean([s.getPerformance(start+STEP, end+STEP) for s in weak_stocks])
+    spread.append(mean_strong_performance - mean_weak_performance)
 
-start = 1
-end = 50
-rows = [(str(s.getOffensive(start, end)), str(s.getDefensive(start, end))) for s in market.stocks]
+
+rows = utils.stringify(spread)
 out = open('results.txt', 'w')
-for row in rows:
-    out.write(' '.join(row))
-    out.write('\n')
+out.write('\n'.join(rows))
 out.close()
