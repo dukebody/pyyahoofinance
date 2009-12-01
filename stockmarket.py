@@ -12,7 +12,9 @@ class Stock:
         return [0] + [(self.values[i] - self.values[i-1])/self.values[i-1]*100 for i in range(1, len(self.values))]
 
     def getPerformance(self, start_day, end_day):
-        return utils.mean(self.returns[start_day:end_day])
+        selected_returns = self.returns[start_day:end_day]
+        performances = [r/100+1 for r in selected_returns]
+        return (utils.contract(performances)-1)*100
 
     def getOffensive(self, start_day, end_day):
         stock_returns = self.returns[start_day:end_day]
@@ -58,4 +60,5 @@ class Market:
         return defensive_benchmark
 
     def getPerformance(self, start_day, end_day):
-        return utils.mean(self.returns[start_day:end_day])
+        stocks_performances = [s.getPerformance(start_day, end_day) for s in self.stocks]
+        return utils.mean(stocks_performances)

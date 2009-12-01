@@ -24,6 +24,13 @@ def point_mean(list_of_lists):
     points = zip(*list_of_lists)
     return [mean(p) for p in points]
 
+def contract(list_):
+    """Calculate the product of the elements in the list."""
+    prod = 1
+    for element in list_:
+        prod *= element
+    return prod
+
 DATA_FOLDER = 'data'
 NWEEKS = 12*9 # number of weeks we get data from
 NVALUES = 1259 # number of expected values XXX: this is terribly ugly
