@@ -33,20 +33,33 @@ INDEX = '%5EGSPC' # ticker of the index
 
 def get_tickers():
     """Get the Standard & Poor stock tickers."""
+    
+    f = file('%s/tickers.txt' % DATA_FOLDER, 'r')
+    data = f.read()
+    f.close()
     tickers = []
+    stocks = data.split('\r\n')
+    for stock in stocks:
+        try:
+            ticker = stock.split(',')[TICKER_COLUMN]
+            ticker = ticker.replace('"', '') # remove surrounding quotes
+            if ticker: # not empty ticker
+                tickers.append(ticker)
+        except IndexError: # empty row
+            pass
+    return tickers
+
+def download_sap_tickers():
+    """Dump the list of sap tickers to disk."""
+
+    data = []
     for n in range(0, 500, 50):
         url = urllib2.urlopen("http://download.finance.yahoo.com/d/quotes.csv?s=@%5EGSPC&f=sl1d1t1c1ohgv&e=.csv&h=PAGE".replace('PAGE', str(n)))
-        data = url.read()
-        stocks = data.split('\r\n')
-        for stock in stocks:
-            try:
-                ticker = stock.split(',')[TICKER_COLUMN]
-                ticker = ticker.replace('"', '') # remove surrounding quotes
-                if ticker: # not empty ticker
-                    tickers.append(ticker)
-            except IndexError: # empty row
-                pass
-    return tickers
+        data.append(url.read())
+
+    f = file('%s/tickers.txt' % DATA_FOLDER, 'w')
+    f.write(''.join(data))
+    f.close()
 
 def download_historical_daily_data(ticker, year_start, year_end):
     """Download historical data for the given ticker in CSV."""
