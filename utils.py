@@ -83,6 +83,7 @@ def get_dates(ticker):
     date_column = 0
     dates = [measure.split(',')[date_column] for measure in measures]
 
+    dates.reverse()
     return dates
     
 
@@ -103,6 +104,7 @@ def get_closes(ticker):
 
     closes = [float(measure.split(',')[CLOSE_COLUMN]) for measure in measures]
 
+    closes.reverse()
     return closes
 
 def get_closes_from_tickerslist(tickerslist): 
