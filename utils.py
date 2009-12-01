@@ -67,6 +67,24 @@ def download_historical_data(ticker):
     f.write(history)
     f.close()
 
+def get_dates(ticker):
+    """Return the list of dates with values for a certain ticker."""
+
+    f = file('%s/%s.csv' % (DATA_FOLDER, ticker), 'r')
+    history = f.read()
+    
+    measures = history.split('\n')
+    measures = measures[1:-1] # the last row is empty and the first
+                              # one contains the labels
+
+    if len(measures) != NVALUES: # incomplete data
+        raise ValueError
+
+    date_column = 0
+    dates = [measure.split(',')[date_column] for measure in measures]
+
+    return dates
+    
 
 def get_closes(ticker):
     """Return the historical closing values for the stocks with the
