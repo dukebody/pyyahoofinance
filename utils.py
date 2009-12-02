@@ -25,21 +25,19 @@ def point_mean(list_of_lists):
     return [mean(p) for p in points]
 
 def contract(list_):
-    """Calculate the product of the elements in the list."""
+    """Calculate the product of all the elements in the list."""
     prod = 1
     for element in list_:
         prod *= element
     return prod
 
-DATA_FOLDER = 'data'
-NWEEKS = 12*9 # number of weeks we get data from
-NVALUES = 1259 # number of expected values XXX: this is terribly ugly
+DATA_FOLDER = 'data' # folder where the CSV files from Yahoo! will end
 CLOSE_COLUMN = 4 # the index of the column containing the close value
 TICKER_COLUMN = 0 # the index of the column containing the ticker name
 INDEX = '%5EGSPC' # ticker of the index
 
 def get_tickers():
-    """Get the Standard & Poor stock tickers."""
+    """Get the Standard & Poor stock tickers from disk."""
     
     f = file('%s/tickers.txt' % DATA_FOLDER, 'r')
     data = f.read()
@@ -57,7 +55,7 @@ def get_tickers():
     return tickers
 
 def download_sap_tickers():
-    """Dump the list of sap tickers to disk."""
+    """Dump the list of s&p tickers to disk."""
 
     data = []
     for n in range(0, 500, 50):
@@ -69,7 +67,7 @@ def download_sap_tickers():
     f.close()
 
 def download_historical_daily_data(ticker, year_start, year_end):
-    """Download historical data for the given ticker in CSV."""
+    """Download historical daily data for the given ticker in CSV."""
     print "getting data from ticker: %s" % ticker
     url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=%d&d=00&e=1&f=%d&g=d&ignore=.csv" % (ticker, year_start, year_end))
 
@@ -79,7 +77,7 @@ def download_historical_daily_data(ticker, year_start, year_end):
     f.close()
 
 def download_historical_data(ticker):
-    """Download historical data for the given ticker in CSV."""
+    """Download historical monthly data for the given ticker in CSV."""
     print "getting data from ticker: %s" % ticker
     url = urllib2.urlopen("http://ichart.finance.yahoo.com/table.csv?s=%s&a=00&b=1&c=2000&d=00&e=1&f=2009&g=m&ignore=.csv" % ticker)
 
@@ -135,11 +133,13 @@ def get_stocks_from_tickerslist(tickerslist):
         try:
             values = get_closes(ticker)
             stocks.append(Stock(ticker, values))
-        except IOError: # data for the ticker not found or incomplete
+        except IOError: # data for the ticker not found
             print "data not found for ticker: %s" % ticker
 
+    # filter the stocks to remove the ones with incomplete values
     max_len = max([len(s.values) for s in stocks])
     valid_stocks = [s for s in stocks if len(s.values) == max_len]
+
     return valid_stocks
 
 ### START OBSOLETE CODE ###
